@@ -70,6 +70,29 @@ def inverso_modular(e, n):
 
 
 def generar_llaves(rango_inferior, rango_superior):
+    """
+    Genera un par de llaves RSA (pública y privada) dentro de un rango especificado de números primos.
+
+    La función genera dos números primos diferentes dentro del rango especificado, calcula el módulo (n),
+    la función φ(n), el exponente público (e) y el exponente privado (d).
+
+    Parámetros:
+        rango_inferior (int): Límite inferior del rango para la búsqueda de números primos.
+        rango_superior (int): Límite superior del rango para la búsqueda de números primos.
+
+    Retorna:
+        tuple: Una tupla con dos elementos:
+            - Llave pública: (e, n), donde e es el exponente público y n es el módulo.
+            - Llave privada: (d, n), donde d es el exponente privado y n es el módulo.
+
+    Excepciones:
+        ValueError: Si no se puede calcular el inverso modular (e y φ(n) no son coprimos).
+        None: Si no se generan llaves válidas debido a problemas en el rango especificado.
+
+    Ejemplo de uso:
+        >>> llave_publica, llave_privada = generar_llaves(10, 50)
+    """
+
     # Generar dos números primos p y q
     p = generar_primo(rango_inferior, rango_superior)
     q = generar_primo(rango_inferior, rango_superior)
@@ -93,12 +116,56 @@ def generar_llaves(rango_inferior, rango_superior):
     return (e, n), (d, n)
 
 def encriptar(mensaje, llave_publica):
+    """
+    Encripta un mensaje utilizando la llave pública RSA.
+
+    La función toma un mensaje (un número entero positivo) y lo encripta utilizando la llave pública.
+
+    Parámetros:
+        mensaje (int): El mensaje a encriptar. Debe ser un entero positivo menor que n.
+        llave_publica (tuple): La llave pública (e, n) donde:
+            - e: Exponente público.
+            - n: Módulo.
+
+    Retorna:
+        int: El mensaje encriptado.
+
+    Excepciones:
+        ValueError: Si el mensaje no es un entero positivo menor que n.
+
+    Ejemplo de uso:
+        >>> encriptar(42, (7, 221))
+        196
+    """
+
     e, n = llave_publica
     if mensaje < 0 or mensaje >= n:
         raise ValueError("El mensaje debe ser un número positivo menor que n.")
     return pow(mensaje, e, n)  # mensaje^e mod n
 
 def desencriptar(caracter_encriptado, llave_privada):
+    """
+    Desencripta un mensaje utilizando la llave privada RSA.
+
+    La función toma un mensaje encriptado (un número entero) y lo desencripta utilizando la llave privada.
+
+    Parámetros:
+        caracter_encriptado (int): El mensaje encriptado. Debe ser un entero positivo menor que n.
+        llave_privada (tuple): La llave privada (d, n) donde:
+            - d: Exponente privado.
+            - n: Módulo.
+
+    Retorna:
+        int: El mensaje desencriptado (original).
+
+    Excepciones:
+        ValueError: Si el mensaje encriptado no es un entero positivo menor que n.
+
+    Ejemplo de uso:
+        >>> desencriptar(196, (103, 221))
+        42
+    """
+    
     d, n = llave_privada
     if caracter_encriptado < 0 or caracter_encriptado >= n:
         raise ValueError("El caracter encriptado debe ser un número positivo menor que n.")
